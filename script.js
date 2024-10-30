@@ -23,19 +23,40 @@ var Customer = /** @class */ (function () {
         var firstTitle = createNewElement('h3', 'Ditt saldo är:', null, null, popupBox);
         var balanceTitle = createNewElement('h1', "".concat(customer.balance.toLocaleString('sv-SE'), " SEK"), null, null, popupBox);
     };
-    Customer.prototype.makeDeposit = function () {
+    Customer.prototype.makeDepositOrWithdrawal = function (type) {
         var _this = this;
+        var actionNoun;
+        var actionVerb;
+        if (type == 'deposit') {
+            actionNoun = 'Insättning';
+            actionVerb = 'sätta in';
+        }
+        else {
+            actionNoun = 'Uttag';
+            actionVerb = 'ta ut';
+        }
         popup.style.display = 'flex';
-        var title = createNewElement('h3', 'Välj den summa du vill sätta in:', null, null, popupBox);
+        createNewElement('h3', "V\u00E4lj den summa du vill ".concat(actionVerb, ":"), null, null, popupBox);
         var amountTextbox = createNewElement('input', null, null, null, popupBox);
         amountTextbox.type = 'number';
         amountTextbox.min = '1';
-        var confirmButton = createNewElement('button', 'Gör insättning', null, null, popupBox);
+        var confirmButton = createNewElement('button', "G\u00F6r ".concat(actionNoun.toLowerCase()), null, null, popupBox);
         confirmButton.onclick = function () {
             var depositValue = +amountTextbox.value;
-            _this.balance += depositValue;
+            if (type == 'deposit') {
+                _this.balance += depositValue;
+            }
+            else {
+                var newBalance = _this.balance - depositValue;
+                if (newBalance < 0) {
+                    var errorText = createNewElement('h3', 'Du har inte tillräckligt med pengar för att genomföra uttaget.', null, null, popupBox);
+                    errorText.style.color = 'red';
+                    return;
+                }
+                _this.balance = newBalance;
+            }
             popupBox.innerHTML = '';
-            createNewElement('h3', "Ins\u00E4ttning p\u00E5 ".concat(depositValue.toLocaleString('sv-SE'), " SEK har genomf\u00F6rts."), null, null, popupBox);
+            createNewElement('h3', "".concat(actionNoun, " p\u00E5 ").concat(depositValue.toLocaleString('sv-SE'), " SEK har genomf\u00F6rts."), null, null, popupBox);
         };
     };
     return Customer;
@@ -46,7 +67,10 @@ document.getElementById('balance').onclick = function () {
     customer.showBalance();
 };
 document.getElementById('deposit').onclick = function () {
-    customer.makeDeposit();
+    customer.makeDepositOrWithdrawal('deposit');
+};
+document.getElementById('withdrawal').onclick = function () {
+    customer.makeDepositOrWithdrawal('withdrawal');
 };
 document.getElementById('closeButton').onclick = function () {
     document.getElementById('modalBackground').style.display = 'none';

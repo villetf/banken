@@ -38,18 +38,38 @@ class Customer {
       const balanceTitle = createNewElement('h1',`${customer.balance.toLocaleString('sv-SE')} SEK`, null, null, popupBox);
    }
 
-   makeDeposit() {
+   makeDepositOrWithdrawal(type:string) {
+      let actionNoun:string;
+      let actionVerb:string;
+      if (type == 'deposit') {
+         actionNoun = 'Insättning';
+         actionVerb = 'sätta in'; 
+      } else {
+         actionNoun = 'Uttag';
+         actionVerb = 'ta ut';
+      }
       popup.style.display = 'flex';
-      const title = createNewElement('h3', 'Välj den summa du vill sätta in:', null, null, popupBox);
+      createNewElement('h3', `Välj den summa du vill ${actionVerb}:`, null, null, popupBox);
       const amountTextbox = createNewElement('input', null, null, null, popupBox) as HTMLInputElement;
       amountTextbox.type = 'number';
       amountTextbox.min = '1';
-      const confirmButton = createNewElement('button', 'Gör insättning', null, null, popupBox);
+      const confirmButton = createNewElement('button', `Gör ${actionNoun.toLowerCase()}`, null, null, popupBox);
       confirmButton.onclick = () => {
          const depositValue = +amountTextbox.value;
-         this.balance += depositValue;
+         if (type == 'deposit') {
+            this.balance += depositValue;
+         } else {
+            const newBalance = this.balance - depositValue;
+            if (newBalance < 0) {
+               const errorText = createNewElement('h3', 'Du har inte tillräckligt med pengar för att genomföra uttaget.', null, null, popupBox);
+               errorText.style.color = 'red';
+               return;
+            }
+            this.balance = newBalance;
+         }
+         
          popupBox.innerHTML = '';
-         createNewElement('h3', `Insättning på ${depositValue.toLocaleString('sv-SE')} SEK har genomförts.`, null, null, popupBox);
+         createNewElement('h3', `${actionNoun} på ${depositValue.toLocaleString('sv-SE')} SEK har genomförts.`, null, null, popupBox);
       }
    }
 }
@@ -63,7 +83,11 @@ document.getElementById('balance')!.onclick = () => {
 }
 
 document.getElementById('deposit')!.onclick = () => {
-   customer.makeDeposit();
+   customer.makeDepositOrWithdrawal('deposit');
+}
+
+document.getElementById('withdrawal')!.onclick = () => {
+   customer.makeDepositOrWithdrawal('withdrawal');
 }
 
 document.getElementById('closeButton')!.onclick = () => {
