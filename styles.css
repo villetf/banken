@@ -46,7 +46,6 @@ body {
    max-width: 400px;
  }
  
- /* Stäng-knappen */
  .close {
    color: #aaa;
    float: right;
@@ -58,4 +57,10 @@ body {
  .close:hover, .close:focus {
    color: black;
    cursor: pointer;
+ }
+
+ #dynamicContent {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
  }
