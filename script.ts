@@ -1,41 +1,52 @@
 const popup = document.getElementById('modalBackground')!;
 const popupBox = document.getElementById('dynamicContent')!;
 
+// Klass för banken
 class Bank {
    bankName:string;
-   customers:object[];
+   customers:Customer[];
+
+   constructor(name:string, customers:Customer[]) {
+      this.bankName = name
+      this.customers = customers
+   }
 
    customerName:string;
    password:string;
    balance:number;
 
-   constructor(name:string, customers:object[]) {
-      this.bankName = name
-      this.customers = customers
+   createNewCustomer(customerName:string, password:string) {
+      const newCustomer = new Customer(customerName, password, 0);
+      this.customers.push(newCustomer);
+      this.saveBankToLocalStorage()
+      return newCustomer;
    }
 
-   createNewCustomer(customerName:string, password:string) {
-      const newCustomer = new Customer(customerName, password);
-      this.customers.push(newCustomer);
-      return newCustomer;
+   saveBankToLocalStorage() {
+      localStorage.setItem('bank', JSON.stringify(this));
+   }
+
+   createCustomerInstance(customerName:string, password:string, balance:number) {
+      return new Customer(customerName, password, balance);
    }
 }
 
+// Klass för kunden
 class Customer {
    name:string;
    password:string;
    balance:number;
 
-   constructor(name:string, password:string) {
+   constructor(name:string, password:string, balance:number) {
       this.name = name;
       this.password = password;
-      this.balance = 0;
+      this.balance = balance;
    }
 
    showBalance() {
       popup.style.display = 'flex';
       const firstTitle = createNewElement('h3', 'Ditt saldo är:', null, null, popupBox);
-      const balanceTitle = createNewElement('h1',`${customer.balance.toLocaleString('sv-SE')} SEK`, null, null, popupBox);
+      const balanceTitle = createNewElement('h1',`${currentCustomer.balance.toLocaleString('sv-SE')} SEK`, null, null, popupBox);
    }
 
    makeDepositOrWithdrawal(type:string) {
@@ -74,20 +85,59 @@ class Customer {
    }
 }
 
-const bank = new Bank('Typbanken', []);
-const customer = bank.createNewCustomer('Ville', '1234');
+const localStorageBank = JSON.parse(localStorage.getItem('bank')!);
+const bank = new Bank(localStorageBank.bankName, localStorageBank.customers);
+let currentCustomer:object;
+(document.querySelector('header h1') as HTMLHeadingElement).innerText = bank.bankName;
+bank.saveBankToLocalStorage();
 
+document.getElementById('login')!.onclick = () => {
+   const username = document.getElementById('username')! as HTMLInputElement;
+   const password = document.getElementById('password')! as HTMLInputElement;
+   console.log(bank.customers);
+   let correctCredentials = false;
+   console.log();
+   let correctUser:object;
+   bank.customers.forEach(customer => {
+      if (username.value == customer.name && password.value == customer.password) {
+         correctCredentials = true;
+         correctUser = customer;
+         return;
+      }
+   });
+   if (correctCredentials) {
+      console.log('användare', correctUser!);
+      currentCustomer = bank.createCustomerInstance(correctUser!.name, correctUser!.password, correctUser!.balance);
+      document.getElementById('loginPage')?.classList.add('hidden')
+      document.getElementById('buttonContainer')?.classList.remove('hidden');
+   }
+}
+
+document.getElementById('newUser')!.onclick = () => {
+   popup.style.display = 'flex';
+   createNewElement('h3', 'Skapa användare', null, null, popupBox);
+   const newUsername = createNewElement('input', null, null, null, popupBox) as HTMLInputElement;
+   const newPassword = createNewElement('input', null, null, null, popupBox) as HTMLInputElement;
+   newUsername.placeholder = 'Användarnamn';
+   newPassword.placeholder = 'Lösenord';
+   newPassword.type = 'password'
+   const saveUserButton = createNewElement('button', 'Skapa användare', null, null, popupBox);
+   saveUserButton.onclick = () => {
+      bank.createNewCustomer(newUsername.value, newPassword.value);
+      createNewElement('h4', 'Konto har skapats!', 'accountCreated', null, popupBox)
+   }
+}
 
 document.getElementById('balance')!.onclick = () => {
-   customer.showBalance();
+   currentCustomer.showBalance();
 }
 
 document.getElementById('deposit')!.onclick = () => {
-   customer.makeDepositOrWithdrawal('deposit');
+   currentCustomer.makeDepositOrWithdrawal('deposit');
 }
 
 document.getElementById('withdrawal')!.onclick = () => {
-   customer.makeDepositOrWithdrawal('withdrawal');
+   currentCustomer.makeDepositOrWithdrawal('withdrawal');
 }
 
 document.getElementById('closeButton')!.onclick = () => {

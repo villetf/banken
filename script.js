@@ -1,27 +1,36 @@
 var popup = document.getElementById('modalBackground');
 var popupBox = document.getElementById('dynamicContent');
+// Klass för banken
 var Bank = /** @class */ (function () {
     function Bank(name, customers) {
         this.bankName = name;
         this.customers = customers;
     }
     Bank.prototype.createNewCustomer = function (customerName, password) {
-        var newCustomer = new Customer(customerName, password);
+        var newCustomer = new Customer(customerName, password, 0);
         this.customers.push(newCustomer);
+        this.saveBankToLocalStorage();
         return newCustomer;
+    };
+    Bank.prototype.saveBankToLocalStorage = function () {
+        localStorage.setItem('bank', JSON.stringify(this));
+    };
+    Bank.prototype.createCustomerInstance = function (customerName, password, balance) {
+        return new Customer(customerName, password, balance);
     };
     return Bank;
 }());
+// Klass för kunden
 var Customer = /** @class */ (function () {
-    function Customer(name, password) {
+    function Customer(name, password, balance) {
         this.name = name;
         this.password = password;
-        this.balance = 0;
+        this.balance = balance;
     }
     Customer.prototype.showBalance = function () {
         popup.style.display = 'flex';
         var firstTitle = createNewElement('h3', 'Ditt saldo är:', null, null, popupBox);
-        var balanceTitle = createNewElement('h1', "".concat(customer.balance.toLocaleString('sv-SE'), " SEK"), null, null, popupBox);
+        var balanceTitle = createNewElement('h1', "".concat(currentCustomer.balance.toLocaleString('sv-SE'), " SEK"), null, null, popupBox);
     };
     Customer.prototype.makeDepositOrWithdrawal = function (type) {
         var _this = this;
@@ -61,16 +70,55 @@ var Customer = /** @class */ (function () {
     };
     return Customer;
 }());
-var bank = new Bank('Typbanken', []);
-var customer = bank.createNewCustomer('Ville', '1234');
+var localStorageBank = JSON.parse(localStorage.getItem('bank'));
+var bank = new Bank(localStorageBank.bankName, localStorageBank.customers);
+var currentCustomer;
+document.querySelector('header h1').innerText = bank.bankName;
+bank.saveBankToLocalStorage();
+document.getElementById('login').onclick = function () {
+    var _a, _b;
+    var username = document.getElementById('username');
+    var password = document.getElementById('password');
+    console.log(bank.customers);
+    var correctCredentials = false;
+    console.log();
+    var correctUser;
+    bank.customers.forEach(function (customer) {
+        if (username.value == customer.name && password.value == customer.password) {
+            correctCredentials = true;
+            correctUser = customer;
+            return;
+        }
+    });
+    if (correctCredentials) {
+        console.log('användare', correctUser);
+        currentCustomer = bank.createCustomerInstance(correctUser.name, correctUser.password, correctUser.balance);
+        (_a = document.getElementById('loginPage')) === null || _a === void 0 ? void 0 : _a.classList.add('hidden');
+        (_b = document.getElementById('buttonContainer')) === null || _b === void 0 ? void 0 : _b.classList.remove('hidden');
+    }
+};
+document.getElementById('newUser').onclick = function () {
+    popup.style.display = 'flex';
+    createNewElement('h3', 'Skapa användare', null, null, popupBox);
+    var newUsername = createNewElement('input', null, null, null, popupBox);
+    var newPassword = createNewElement('input', null, null, null, popupBox);
+    newUsername.placeholder = 'Användarnamn';
+    newPassword.placeholder = 'Lösenord';
+    newPassword.type = 'password';
+    var saveUserButton = createNewElement('button', 'Skapa användare', null, null, popupBox);
+    saveUserButton.onclick = function () {
+        bank.createNewCustomer(newUsername.value, newPassword.value);
+        createNewElement('h4', 'Konto har skapats!', 'accountCreated', null, popupBox);
+    };
+};
 document.getElementById('balance').onclick = function () {
-    customer.showBalance();
+    currentCustomer.showBalance();
 };
 document.getElementById('deposit').onclick = function () {
-    customer.makeDepositOrWithdrawal('deposit');
+    currentCustomer.makeDepositOrWithdrawal('deposit');
 };
 document.getElementById('withdrawal').onclick = function () {
-    customer.makeDepositOrWithdrawal('withdrawal');
+    currentCustomer.makeDepositOrWithdrawal('withdrawal');
 };
 document.getElementById('closeButton').onclick = function () {
     document.getElementById('modalBackground').style.display = 'none';

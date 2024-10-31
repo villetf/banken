@@ -7,6 +7,27 @@ body {
    align-items: center; */
 }
 
+#loginPage {
+   height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#loginPage input {
+   margin-bottom: 10px;
+}
+
+#newUser {
+   color: blue;
+   text-decoration: underline;
+}
+
+#accountCreated {
+   color: green;
+}
+
 #buttonContainer {
    width: 100%;
    height: 90%;
