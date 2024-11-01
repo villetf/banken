@@ -15,6 +15,7 @@ class Bank {
    password:string;
    balance:number;
 
+   // Metod för att skapa ny användare i banken
    createNewCustomer(customerName:string, password:string) {
       const newCustomer = new Customer(customerName, password, 0);
       this.customers.push(newCustomer);
@@ -100,6 +101,7 @@ class Customer {
       }
    }
 
+   // Metod för att göra utloggning
    logout() {
       document.getElementById('loginPage')?.classList.remove('hidden');
       document.getElementById('buttonContainer')?.classList.add('hidden');
@@ -212,7 +214,7 @@ function loginUser(user:string) {
 
 
 
-
+// Funktion för att skap nytt element
 function createNewElement(elementType:string, text:string|null, id:string|null, classes:string|null, parent:HTMLElement|null) {
    const element = document.createElement(elementType);
 

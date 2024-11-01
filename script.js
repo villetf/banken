@@ -6,6 +6,7 @@ var Bank = /** @class */ (function () {
         this.bankName = name;
         this.customers = customers;
     }
+    // Metod för att skapa ny användare i banken
     Bank.prototype.createNewCustomer = function (customerName, password) {
         var newCustomer = new Customer(customerName, password, 0);
         this.customers.push(newCustomer);
@@ -82,6 +83,7 @@ var Customer = /** @class */ (function () {
             createNewElement('h3', "".concat(actionNoun, " p\u00E5 ").concat(depositValue.toLocaleString('sv-SE'), " SEK har genomf\u00F6rts."), null, null, popupBox);
         };
     };
+    // Metod för att göra utloggning
     Customer.prototype.logout = function () {
         var _a, _b;
         (_a = document.getElementById('loginPage')) === null || _a === void 0 ? void 0 : _a.classList.remove('hidden');
@@ -185,6 +187,7 @@ function loginUser(user) {
     (_a = document.getElementById('loginPage')) === null || _a === void 0 ? void 0 : _a.classList.add('hidden');
     (_b = document.getElementById('buttonContainer')) === null || _b === void 0 ? void 0 : _b.classList.remove('hidden');
 }
+// Funktion för att skap nytt element
 function createNewElement(elementType, text, id, classes, parent) {
     var _a;
     var element = document.createElement(elementType);
