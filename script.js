@@ -39,7 +39,7 @@ var Customer = /** @class */ (function () {
     }
     // Metod för att visa saldo
     Customer.prototype.showBalance = function () {
-        popup.style.display = 'flex';
+        popup.classList.remove('hidden');
         var firstTitle = createNewElement('h3', 'Ditt saldo är:', null, null, popupBox);
         var balanceTitle = createNewElement('h1', "".concat(currentCustomer.balance.toLocaleString('sv-SE'), " SEK"), null, null, popupBox);
     };
@@ -56,7 +56,7 @@ var Customer = /** @class */ (function () {
             actionNoun = 'Uttag';
             actionVerb = 'ta ut';
         }
-        popup.style.display = 'flex';
+        popup.classList.remove('hidden');
         createNewElement('h3', "V\u00E4lj den summa du vill ".concat(actionVerb, ":"), null, null, popupBox);
         var amountTextbox = createNewElement('input', null, null, null, popupBox);
         amountTextbox.type = 'number';
@@ -110,7 +110,7 @@ if (localStorage.getItem('userLoggedIn')) {
 }
 // Klick på logga in-knappen
 document.getElementById('login').onclick = function () {
-    var _a;
+    var _a, _b;
     var username = document.getElementById('username');
     var password = document.getElementById('password');
     var correctCredentials = false;
@@ -125,16 +125,19 @@ document.getElementById('login').onclick = function () {
     if (correctCredentials) {
         localStorage.setItem('userLoggedIn', correctUser);
         loginUser(correctUser);
+        if (document.getElementById('wrongCredText')) {
+            (_a = document.getElementById('wrongCredText')) === null || _a === void 0 ? void 0 : _a.remove();
+        }
     }
     else if (!document.getElementById('wrongCredText')) {
         var wrongCred = createNewElement('h4', 'Felaktigt användarnamn eller lösenord, försök igen!', 'wrongCredText', null, null);
         wrongCred.style.color = 'red';
-        (_a = document.getElementById('loginPage')) === null || _a === void 0 ? void 0 : _a.insertBefore(wrongCred, document.getElementById('newUser'));
+        (_b = document.getElementById('loginPage')) === null || _b === void 0 ? void 0 : _b.insertBefore(wrongCred, document.getElementById('newUser'));
     }
 };
 // Klick på Skapa användare-knappen
 document.getElementById('newUser').onclick = function () {
-    popup.style.display = 'flex';
+    popup.classList.remove('hidden');
     createNewElement('h3', 'Skapa konto', null, null, popupBox);
     var newUsername = createNewElement('input', null, null, null, popupBox);
     var newPassword = createNewElement('input', null, null, null, popupBox);
@@ -166,7 +169,7 @@ document.getElementById('logout').onclick = function () {
 };
 // Klick på stänga ner ruta-kryss
 document.getElementById('closeButton').onclick = function () {
-    document.getElementById('modalBackground').style.display = 'none';
+    document.getElementById('modalBackground').classList.add('hidden');
     document.getElementById('dynamicContent').innerHTML = '';
 };
 // Funktion för att logga in en användare

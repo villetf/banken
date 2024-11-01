@@ -33,7 +33,7 @@ class Bank {
    }
 
    // Metod för att uppdatera användarens info (i detta fall bara saldo)
-   updateCustomerInfo(customer:object) {
+   updateCustomerInfo(customer:Customer) {
       for (const currentCustomer in this.customers) {
          if (this.customers[currentCustomer].name == customer.name) {
             this.customers[currentCustomer] = customer;
@@ -56,7 +56,7 @@ class Customer {
 
    // Metod för att visa saldo
    showBalance() {
-      popup.style.display = 'flex';
+      popup.classList.remove('hidden');
       const firstTitle = createNewElement('h3', 'Ditt saldo är:', null, null, popupBox);
       const balanceTitle = createNewElement('h1',`${currentCustomer.balance.toLocaleString('sv-SE')} SEK`, null, null, popupBox);
    }
@@ -72,7 +72,7 @@ class Customer {
          actionNoun = 'Uttag';
          actionVerb = 'ta ut';
       }
-      popup.style.display = 'flex';
+      popup.classList.remove('hidden');
       createNewElement('h3', `Välj den summa du vill ${actionVerb}:`, null, null, popupBox);
       const amountTextbox = createNewElement('input', null, null, null, popupBox) as HTMLInputElement;
       amountTextbox.type = 'number';
@@ -103,8 +103,8 @@ class Customer {
    logout() {
       document.getElementById('loginPage')?.classList.remove('hidden');
       document.getElementById('buttonContainer')?.classList.add('hidden');
-      document.getElementById('username')!.value = '';
-      document.getElementById('password')!.value = '';
+      (document.getElementById('username')! as HTMLInputElement).value = '';
+      (document.getElementById('password')! as HTMLInputElement).value = '';
    }
 }
 
@@ -144,6 +144,9 @@ document.getElementById('login')!.onclick = () => {
    if (correctCredentials) {
       localStorage.setItem('userLoggedIn', correctUser!)
       loginUser(correctUser!);
+      if (document.getElementById('wrongCredText')) {
+         document.getElementById('wrongCredText')?.remove();
+      }
    } else if (!document.getElementById('wrongCredText')) {
       const wrongCred = createNewElement('h4', 'Felaktigt användarnamn eller lösenord, försök igen!', 'wrongCredText', null, null);
       wrongCred.style.color = 'red';
@@ -153,7 +156,7 @@ document.getElementById('login')!.onclick = () => {
 
 // Klick på Skapa användare-knappen
 document.getElementById('newUser')!.onclick = () => {
-   popup.style.display = 'flex';
+   popup.classList.remove('hidden');
    createNewElement('h3', 'Skapa konto', null, null, popupBox);
    const newUsername = createNewElement('input', null, null, null, popupBox) as HTMLInputElement;
    const newPassword = createNewElement('input', null, null, null, popupBox) as HTMLInputElement;
@@ -190,13 +193,13 @@ document.getElementById('logout')!.onclick = () => {
 
 // Klick på stänga ner ruta-kryss
 document.getElementById('closeButton')!.onclick = () => {
-   document.getElementById('modalBackground')!.style.display = 'none';
+   document.getElementById('modalBackground')!.classList.add('hidden');
    document.getElementById('dynamicContent')!.innerHTML = '';
 }
 
 // Funktion för att logga in en användare
 function loginUser(user:string) {
-   let correctCustomer:object;
+   let correctCustomer:Customer;
    bank.customers.forEach(customer => {
       if (customer.name == user) {
          correctCustomer = customer;
