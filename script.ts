@@ -175,6 +175,15 @@ document.getElementById('withdrawal')!.onclick = () => {
    currentCustomer.makeDepositOrWithdrawal('withdrawal');
 }
 
+// Klick på avsluta-knappen
+document.getElementById('logout')!.onclick = () => {
+   localStorage.removeItem('userLoggedIn');
+   document.getElementById('loginPage')?.classList.remove('hidden')
+   document.getElementById('buttonContainer')?.classList.add('hidden');
+   document.getElementById('username')!.value = ''
+   document.getElementById('password')!.value = ''
+}
+
 // Klick på stänga ner ruta-kryss
 document.getElementById('closeButton')!.onclick = () => {
    document.getElementById('modalBackground')!.style.display = 'none';

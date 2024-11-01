@@ -152,6 +152,15 @@ document.getElementById('deposit').onclick = function () {
 document.getElementById('withdrawal').onclick = function () {
     currentCustomer.makeDepositOrWithdrawal('withdrawal');
 };
+// Klick på avsluta-knappen
+document.getElementById('logout').onclick = function () {
+    var _a, _b;
+    localStorage.removeItem('userLoggedIn');
+    (_a = document.getElementById('loginPage')) === null || _a === void 0 ? void 0 : _a.classList.remove('hidden');
+    (_b = document.getElementById('buttonContainer')) === null || _b === void 0 ? void 0 : _b.classList.add('hidden');
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+};
 // Klick på stänga ner ruta-kryss
 document.getElementById('closeButton').onclick = function () {
     document.getElementById('modalBackground').style.display = 'none';
