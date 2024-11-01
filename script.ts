@@ -99,6 +99,13 @@ class Customer {
          createNewElement('h3', `${actionNoun} på ${depositValue.toLocaleString('sv-SE')} SEK har genomförts.`, null, null, popupBox);
       }
    }
+
+   logout() {
+      document.getElementById('loginPage')?.classList.remove('hidden');
+      document.getElementById('buttonContainer')?.classList.add('hidden');
+      document.getElementById('username')!.value = '';
+      document.getElementById('password')!.value = '';
+   }
 }
 
 // Kollar om banken finns i LS, annars sätt en startbank
@@ -177,11 +184,8 @@ document.getElementById('withdrawal')!.onclick = () => {
 
 // Klick på avsluta-knappen
 document.getElementById('logout')!.onclick = () => {
+   currentCustomer.logout();
    localStorage.removeItem('userLoggedIn');
-   document.getElementById('loginPage')?.classList.remove('hidden')
-   document.getElementById('buttonContainer')?.classList.add('hidden');
-   document.getElementById('username')!.value = ''
-   document.getElementById('password')!.value = ''
 }
 
 // Klick på stänga ner ruta-kryss

@@ -82,6 +82,13 @@ var Customer = /** @class */ (function () {
             createNewElement('h3', "".concat(actionNoun, " p\u00E5 ").concat(depositValue.toLocaleString('sv-SE'), " SEK har genomf\u00F6rts."), null, null, popupBox);
         };
     };
+    Customer.prototype.logout = function () {
+        var _a, _b;
+        (_a = document.getElementById('loginPage')) === null || _a === void 0 ? void 0 : _a.classList.remove('hidden');
+        (_b = document.getElementById('buttonContainer')) === null || _b === void 0 ? void 0 : _b.classList.add('hidden');
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+    };
     return Customer;
 }());
 // Kollar om banken finns i LS, annars sätt en startbank
@@ -154,12 +161,8 @@ document.getElementById('withdrawal').onclick = function () {
 };
 // Klick på avsluta-knappen
 document.getElementById('logout').onclick = function () {
-    var _a, _b;
+    currentCustomer.logout();
     localStorage.removeItem('userLoggedIn');
-    (_a = document.getElementById('loginPage')) === null || _a === void 0 ? void 0 : _a.classList.remove('hidden');
-    (_b = document.getElementById('buttonContainer')) === null || _b === void 0 ? void 0 : _b.classList.add('hidden');
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
 };
 // Klick på stänga ner ruta-kryss
 document.getElementById('closeButton').onclick = function () {
